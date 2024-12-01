@@ -5,6 +5,8 @@ import { UserEntity } from 'src/user/entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { Response } from 'express';
+import { AccessTokenDataDto } from 'src/common/types/accessToken.dto';
+import { Types } from 'mongoose';
 
 @Injectable()
 export class AuthService {
@@ -18,32 +20,37 @@ export class AuthService {
 
     if (!user) {
       throw new UnauthorizedException('Invalid email or password');
+    } else {
+      const isPasswordValid = bcrypt.compareSync(
+        loginUserDto.password,
+        user.password,
+      );
+
+      if (!isPasswordValid) {
+        throw new UnauthorizedException('Invalid email or password');
+      }
+      let tokenPayload: AccessTokenDataDto = {
+        name: user.name,
+        email: user.email,
+        user_id: user._id.toString(),
+      };
+      const accessToken = this.jwtService.sign(tokenPayload);
+
+      res.cookie('accessToken', `Bearer ${accessToken}`, {
+        httpOnly: true,
+        // secure: true,
+        maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
+      });
+
+      res.send({
+        statusCode: HttpStatus.ACCEPTED,
+        message: 'Logged in successfully',
+        data: {
+          ...tokenPayload,
+          accessToken,
+        },
+      });
     }
-    const isPasswordValid = bcrypt.compareSync(
-      loginUserDto.password,
-      user.password,
-    );
-
-    if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid email or password');
-    }
-    let tokenPayload = { name: user.name, email: user.email, _id: user._id };
-    const accessToken = this.jwtService.sign(tokenPayload);
-
-    res.cookie('accessToken', accessToken, {
-      httpOnly: true,
-      // secure: true,
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in milliseconds
-    });
-
-    res.send({
-      statusCode: HttpStatus.ACCEPTED,
-      message: 'Logged in successfully',
-      data: {
-        ...tokenPayload,
-        accessToken,
-      },
-    });
   }
 
   findAll() {
