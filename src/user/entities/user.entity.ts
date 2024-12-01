@@ -18,7 +18,7 @@ export class UserEntity {
     }
   }
 
-  async findByEmail(email: string) {
+  async findByEmail(email: string): Promise<User | null> {
     try {
       return await this.userModel.findOne({ email: email });
     } catch (error: any) {

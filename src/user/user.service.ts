@@ -1,9 +1,15 @@
-import { ConflictException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserEntity } from './entities/user.entity';
-import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -37,21 +43,5 @@ export class UserService {
         data: response.toObject(),
       };
     }
-  }
-
-  findAll() {
-    return `This action returns all user`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
-
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} user`;
   }
 }
