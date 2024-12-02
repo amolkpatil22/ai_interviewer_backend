@@ -1,8 +1,8 @@
 import { InjectModel } from '@nestjs/mongoose';
-import { Sessions, SessionsSchema } from './sessions.schema';
+import { Sessions, SessionsSchema } from '../schema/sessions.schema';
 import { Model, Types } from 'mongoose';
-import { CreateSessionDto } from '../dto/create-session.dto';
-import { UpdateSessionDto } from '../dto/update-interview.dto';
+import { CreateSessionDto } from '../dto/create_session.dto';
+import { UpdateSessionDto } from '../dto/update_session.dto';
 
 export class SessionsEntity {
   constructor(

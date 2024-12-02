@@ -8,9 +8,10 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { InterviewService } from './interview.service';
-import { CreateSessionDto } from './dto/create-session.dto';
+import { CreateSessionDto } from './dto/create_session.dto';
 import { Request as mongoReq } from 'express';
 import { Types } from 'mongoose';
+import { SubmitAnswerDto } from './dto/submit_answer.dto';
 
 @Controller('interview')
 export class InterviewController {
@@ -27,5 +28,24 @@ export class InterviewController {
       throw new BadRequestException('Invalid session_id');
     }
     return this.interviewService.endSession(session_id);
+  }
+
+  @Post('submit-answer/:session_id')
+  submitAnswer(
+    @Param('session_id') session_id: string,
+    @Body() submitAnswerDto: SubmitAnswerDto,
+    @Request() req: mongoReq,
+  ) {
+    if (!Types.ObjectId.isValid(session_id)) {
+      throw new BadRequestException('Invalid session_id');
+    }
+    if (!Types.ObjectId.isValid(submitAnswerDto.question_id)) {
+      throw new BadRequestException('Invalid question_id');
+    }
+    return this.interviewService.submitAnswer(
+      session_id,
+      submitAnswerDto,
+      req.user,
+    );
   }
 }

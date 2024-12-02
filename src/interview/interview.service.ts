@@ -1,16 +1,28 @@
-import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
-import { CreateSessionDto } from './dto/create-session.dto';
+import {
+  BadRequestException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { CreateSessionDto } from './dto/create_session.dto';
 import { SessionsEntity } from './entities/sessions.entity';
-import { AccessTokenDataDto } from 'src/common/types/accessToken.dto';
+import { AccessTokenDataTypes } from 'src/common/types/accessToken.dto';
 import { Types } from 'mongoose';
+import { CandidateAnswersEntity } from './entities/candidate_answers.entity';
+import { SubmitAnswerDto } from './dto/submit_answer.dto';
+import { QuestionsEntity } from './entities/questions.entity';
 
 @Injectable()
 export class InterviewService {
-  constructor(private sessionsEntity: SessionsEntity) {}
+  constructor(
+    private sessionsEntity: SessionsEntity,
+    private candidateAnswersEntity: CandidateAnswersEntity,
+    private questionsEntity: QuestionsEntity,
+  ) {}
 
   async create(
     createInterviewDto: CreateSessionDto,
-    accessTokenDataDto: AccessTokenDataDto,
+    accessTokenDataDto: AccessTokenDataTypes,
   ) {
     const response = await this.sessionsEntity.create({
       ...createInterviewDto,
@@ -43,5 +55,42 @@ export class InterviewService {
         message: 'Session Ended',
       };
     }
+  }
+
+  async submitAnswer(
+    session_id: string,
+    payload: SubmitAnswerDto,
+    user: AccessTokenDataTypes,
+  ) {
+    const question = await this.questionsEntity.getQuestionById(
+      new Types.ObjectId(payload.question_id),
+    );
+
+    if (!question) {
+      throw new BadRequestException('Question not found');
+    }
+
+    const session = await this.sessionsEntity.findOneById(
+      new Types.ObjectId(session_id),
+    );
+
+    if (!session) {
+      throw new BadRequestException('Session not found');
+    }
+
+    const submitPayload = {
+      session_id: new Types.ObjectId(session_id),
+      question_id: new Types.ObjectId(payload.question_id),
+      user_id: new Types.ObjectId(user.user_id),
+      candidate_answer: payload.candidate_answer,
+      submit_date: new Date(),
+    };
+    const response = await this.candidateAnswersEntity.create(submitPayload);
+
+    return {
+      status: HttpStatus.CREATED,
+      message: 'Answer submitted',
+      data: response,
+    };
   }
 }

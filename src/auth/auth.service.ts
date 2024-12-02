@@ -5,8 +5,7 @@ import { UserEntity } from 'src/user/entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { Response } from 'express';
-import { AccessTokenDataDto } from 'src/common/types/accessToken.dto';
-import { Types } from 'mongoose';
+import { AccessTokenDataTypes } from 'src/common/types/accessToken.dto';
 
 @Injectable()
 export class AuthService {
@@ -29,7 +28,7 @@ export class AuthService {
       if (!isPasswordValid) {
         throw new UnauthorizedException('Invalid email or password');
       }
-      let tokenPayload: AccessTokenDataDto = {
+      let tokenPayload: AccessTokenDataTypes = {
         name: user.name,
         email: user.email,
         user_id: user._id.toString(),
