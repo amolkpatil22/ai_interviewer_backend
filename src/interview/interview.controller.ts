@@ -1,18 +1,16 @@
 import {
   Controller,
-  Get,
   Post,
   Body,
   Patch,
   Param,
-  Delete,
   Request,
+  BadRequestException,
 } from '@nestjs/common';
 import { InterviewService } from './interview.service';
 import { CreateSessionDto } from './dto/create-session.dto';
-import { UpdateInterviewDto } from './dto/update-interview.dto';
-import { AccessTokenDataDto } from 'src/common/types/accessToken.dto';
 import { Request as mongoReq } from 'express';
+import { Types } from 'mongoose';
 
 @Controller('interview')
 export class InterviewController {
@@ -23,26 +21,11 @@ export class InterviewController {
     return this.interviewService.create(createSessionDto, req.user);
   }
 
-  @Get()
-  findAll() {
-    return this.interviewService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.interviewService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateInterviewDto: UpdateInterviewDto,
-  ) {
-    return this.interviewService.update(+id, updateInterviewDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.interviewService.remove(+id);
+  @Patch('end-session/:session_id')
+  endSession(@Param('session_id') session_id: string) {
+    if (!Types.ObjectId.isValid(session_id)) {
+      throw new BadRequestException('Invalid session_id');
+    }
+    return this.interviewService.endSession(session_id);
   }
 }
