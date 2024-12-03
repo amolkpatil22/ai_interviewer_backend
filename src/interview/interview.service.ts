@@ -2,6 +2,7 @@ import {
   BadRequestException,
   HttpStatus,
   Injectable,
+  NotAcceptableException,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateSessionDto } from './dto/create_session.dto';
@@ -11,6 +12,11 @@ import { Types } from 'mongoose';
 import { CandidateAnswersEntity } from './entities/candidate_answers.entity';
 import { SubmitAnswerDto } from './dto/submit_answer.dto';
 import { QuestionsEntity } from './entities/questions.entity';
+import { ModelAnswersEntity } from './entities/model_answers.entity';
+import { Sessions } from './schema/sessions.schema';
+import { CandidateAnswers } from './schema/candidate_answers.schema';
+import { ChatgptService } from 'src/chatgpt/chatgpt.service';
+import { MessageJson } from 'src/common/types/messageJson.dto';
 
 @Injectable()
 export class InterviewService {
@@ -18,6 +24,8 @@ export class InterviewService {
     private sessionsEntity: SessionsEntity,
     private candidateAnswersEntity: CandidateAnswersEntity,
     private questionsEntity: QuestionsEntity,
+    private modelAnswerEntity: ModelAnswersEntity,
+    private chatGptService: ChatgptService,
   ) {}
 
   async create(
@@ -67,7 +75,7 @@ export class InterviewService {
     );
 
     if (!question) {
-      throw new BadRequestException('Question not found');
+      throw new NotFoundException('Question not found');
     }
 
     const session = await this.sessionsEntity.findOneById(
@@ -75,7 +83,11 @@ export class InterviewService {
     );
 
     if (!session) {
-      throw new BadRequestException('Session not found');
+      throw new NotFoundException('Session not found');
+    }
+
+    if (session.end_at) {
+      throw new BadRequestException('Session already ended');
     }
 
     const submitPayload = {
@@ -92,5 +104,40 @@ export class InterviewService {
       message: 'Answer submitted',
       data: response,
     };
+  }
+
+  async generateReport(session_id: Types.ObjectId) {
+    const session = await this.sessionsEntity.findOneById(session_id);
+    if (!session) {
+      throw new NotFoundException('Session not found');
+    }
+    const candidate_answers =
+      await this.candidateAnswersEntity.getAllBySessionId(session_id);
+    if (candidate_answers.length === 0) {
+      throw new NotAcceptableException('Answers not found');
+    }
+    const messageJson = await this.buildMessageJson(candidate_answers);
+    const response = this.chatGptService.getFeedBack(messageJson);
+  }
+
+  async buildMessageJson(
+    candidate_answers: CandidateAnswers[],
+  ): Promise<MessageJson[]> {
+    const messageJson = candidate_answers.map(async (item) => {
+      const question = await this.questionsEntity.getQuestionById(
+        item.question_id,
+      );
+      const modelAnswer =
+        await this.modelAnswerEntity.getModelAnswerByQuestionId(
+          item.question_id,
+        );
+      return {
+        question_id: question._id.toString(),
+        question: question.name,
+        model_answer: modelAnswer.model_answer,
+        candidate_answer: item.candidate_answer,
+      };
+    });
+    return Promise.all(messageJson);
   }
 }

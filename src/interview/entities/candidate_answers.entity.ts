@@ -22,4 +22,12 @@ export class CandidateAnswersEntity {
       throw error;
     }
   }
+
+  async getAllBySessionId(session_id: Types.ObjectId) {
+    try {
+      return await this.candidateAnswersModel.find({ session_id });
+    } catch (error: any) {
+      throw error;
+    }
+  }
 }

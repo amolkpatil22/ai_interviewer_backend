@@ -7,7 +7,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './auth/auth.module';
 import { InterviewModule } from './interview/interview.module';
 import { AuthMiddleware } from './middlewares/auth.middleware';
-
+import { ChatgptService } from './chatgpt/chatgpt.service';
+import { ChatgptModule } from './chatgpt/chatgpt.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -22,9 +23,10 @@ import { AuthMiddleware } from './middlewares/auth.middleware';
     UserModule,
     AuthModule,
     InterviewModule,
+    ChatgptModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, ChatgptService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

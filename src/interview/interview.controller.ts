@@ -48,4 +48,12 @@ export class InterviewController {
       req.user,
     );
   }
+
+  @Post('generate-report/:session_id')
+  generateReport(@Param('session_id') session_id: string) {
+    if (!Types.ObjectId.isValid(session_id)) {
+      throw new BadRequestException('Invalid session_id');
+    }
+    return this.interviewService.generateReport(new Types.ObjectId(session_id));
+  }
 }

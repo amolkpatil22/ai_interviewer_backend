@@ -16,6 +16,7 @@ import {
 import { ModelAnswersEntity } from './entities/model_answers.entity';
 import { Questions, QuestionsSchema } from './schema/questions.schema';
 import { QuestionsEntity } from './entities/questions.entity';
+import { ChatgptService } from 'src/chatgpt/chatgpt.service';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { QuestionsEntity } from './entities/questions.entity';
     CandidateAnswersEntity,
     ModelAnswersEntity,
     QuestionsEntity,
+    ChatgptService,
   ],
 })
 export class InterviewModule {}
