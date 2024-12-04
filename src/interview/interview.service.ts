@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { CreateSessionDto } from './dto/create_session.dto';
 import { SessionsEntity } from './entities/sessions.entity';
-import { AccessTokenDataTypes } from 'src/common/types/accessToken.dto';
+import { AccessTokenDataDto } from 'src/common/interfaces/accessToken.dto';
 import { Types } from 'mongoose';
 import { CandidateAnswersEntity } from './entities/candidate_answers.entity';
 import { SubmitAnswerDto } from './dto/submit_answer.dto';
@@ -16,7 +16,7 @@ import { ModelAnswersEntity } from './entities/model_answers.entity';
 import { Sessions } from './schema/sessions.schema';
 import { CandidateAnswers } from './schema/candidate_answers.schema';
 import { ChatgptService } from 'src/chatgpt/chatgpt.service';
-import { MessageJson } from 'src/common/types/messageJson.dto';
+import { UserCommandMessageDto } from 'src/common/interfaces/messageJson.dto';
 
 @Injectable()
 export class InterviewService {
@@ -30,7 +30,7 @@ export class InterviewService {
 
   async create(
     createInterviewDto: CreateSessionDto,
-    accessTokenDataDto: AccessTokenDataTypes,
+    accessTokenDataDto: AccessTokenDataDto,
   ) {
     const response = await this.sessionsEntity.create({
       ...createInterviewDto,
@@ -68,7 +68,7 @@ export class InterviewService {
   async submitAnswer(
     session_id: string,
     payload: SubmitAnswerDto,
-    user: AccessTokenDataTypes,
+    user: AccessTokenDataDto,
   ) {
     const question = await this.questionsEntity.getQuestionById(
       new Types.ObjectId(payload.question_id),
@@ -118,11 +118,12 @@ export class InterviewService {
     }
     const messageJson = await this.buildMessageJson(candidate_answers);
     const response = this.chatGptService.getFeedBack(messageJson);
+    return response;
   }
 
   async buildMessageJson(
     candidate_answers: CandidateAnswers[],
-  ): Promise<MessageJson[]> {
+  ): Promise<UserCommandMessageDto[]> {
     const messageJson = candidate_answers.map(async (item) => {
       const question = await this.questionsEntity.getQuestionById(
         item.question_id,
@@ -131,6 +132,11 @@ export class InterviewService {
         await this.modelAnswerEntity.getModelAnswerByQuestionId(
           item.question_id,
         );
+      console.log(
+        '🚀 ~ InterviewService ~ messageJson ~ modelAnswer:',
+        item.question_id,
+      );
+
       return {
         question_id: question._id.toString(),
         question: question.name,
@@ -138,6 +144,7 @@ export class InterviewService {
         candidate_answer: item.candidate_answer,
       };
     });
+
     return Promise.all(messageJson);
   }
 }

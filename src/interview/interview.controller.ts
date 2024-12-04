@@ -6,6 +6,7 @@ import {
   Param,
   Request,
   BadRequestException,
+  Get,
 } from '@nestjs/common';
 import { InterviewService } from './interview.service';
 import { CreateSessionDto } from './dto/create_session.dto';
@@ -49,7 +50,7 @@ export class InterviewController {
     );
   }
 
-  @Post('generate-report/:session_id')
+  @Get('generate-report/:session_id')
   generateReport(@Param('session_id') session_id: string) {
     if (!Types.ObjectId.isValid(session_id)) {
       throw new BadRequestException('Invalid session_id');

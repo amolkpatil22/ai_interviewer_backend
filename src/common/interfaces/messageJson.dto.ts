@@ -1,4 +1,4 @@
-export class MessageJson {
+export class UserCommandMessageDto {
   question_id: string;
   question: string;
   model_answer: string;

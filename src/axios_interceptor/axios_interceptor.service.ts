@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 import axios, { AxiosInstance } from 'axios';
 
 export const BaseAPI= {
-  chatGpt: 'https://api.openai.com/v1/chat/completions',
+  chatGpt: 'https://api.openai.com/v1/chat',
 };
 
 @Injectable()
@@ -62,7 +62,7 @@ export class AxiosService {
     }
   }
 
-  async post<T>(url?: string, data?: any): Promise<T> {
+  async post<T>(url: string, data?: any): Promise<T> {
     try {
       const response = await this.axiosInstance.post<T>(url, data);
       return response.data;
