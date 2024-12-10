@@ -16,6 +16,7 @@ export class SessionsEntity {
         user_id: new Types.ObjectId(payload.user_id),
         category_id: new Types.ObjectId(payload.category_id),
         sub_category_id: new Types.ObjectId(payload.sub_category_id),
+        difficulty: payload.difficulty,
         start_at: new Date(),
         end_at: null,
       });

@@ -37,6 +37,13 @@ export class InterviewService {
       user_id: accessTokenDataDto.user_id,
     });
 
+    const gptResponse = await this.chatGptService.generateQuestions({
+      category_id: createInterviewDto.category_id,
+      difficulty: createInterviewDto.difficulty,
+      sub_category_id: createInterviewDto.sub_category_id,
+      tech: createInterviewDto.tech,
+    });
+    return gptResponse;
     return {
       status: HttpStatus.CREATED,
       message: 'Session created successfully',

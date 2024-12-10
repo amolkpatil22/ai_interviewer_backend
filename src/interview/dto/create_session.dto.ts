@@ -9,6 +9,12 @@ export class CreateSessionDto {
   @IsMongoId()
   sub_category_id: string;
 
+  @IsString()
+  difficulty: string;
+
+  @IsString()
+  tech: string;
+
   @IsOptional()
   @IsDate()
   start_at: Date;

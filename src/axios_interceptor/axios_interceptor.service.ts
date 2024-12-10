@@ -1,18 +1,34 @@
 // src/common/services/axios.service.ts
-import { Injectable, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  BadRequestException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import axios, { AxiosInstance } from 'axios';
+import axios, {
+  AxiosInstance,
+  InternalAxiosRequestConfig,
+  AxiosResponse,
+  AxiosError,
+} from 'axios';
 
-export const BaseAPI= {
+export const BaseAPI = {
   chatGpt: 'https://api.openai.com/v1/chat',
 };
 
 @Injectable()
 export class AxiosService {
   private axiosInstance: AxiosInstance;
-  private readonly configService: ConfigService;
-  
-  constructor(baseUrl: keyof typeof BaseAPI) {
+
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly baseUrlKey: keyof typeof BaseAPI,
+  ) {
+    const baseUrl = BaseAPI[baseUrlKey];
+    if (!baseUrl) {
+      throw new Error(`Invalid base URL key: ${baseUrlKey}`);
+    }
+
     // Create Axios instance
     this.axiosInstance = axios.create({
       baseURL: baseUrl,
@@ -21,13 +37,16 @@ export class AxiosService {
       },
     });
 
-    // request interceptor
+    this.initializeInterceptors();
+  }
+
+  private initializeInterceptors() {
+    // Request interceptor
     this.axiosInstance.interceptors.request.use(
-      (config) => {
-        const token = this.configService.get('GPT_TOKEN');
+      (config: InternalAxiosRequestConfig) => {
+        const token = this.configService.get<string>('GPT_TOKEN');
         if (token) {
-          // Add Authorization header if token exists
-          config.headers['Authorization'] = `Bearer ${token}`;
+          config.headers.Authorization = `Bearer ${token}`;
         }
         return config;
       },
@@ -37,37 +56,46 @@ export class AxiosService {
       },
     );
 
-    // response interceptor
+    // Response interceptor
     this.axiosInstance.interceptors.response.use(
-      (response) => {
-        return response.data;
-      },
+      (response: AxiosResponse) => response,
       (error) => {
-        console.error('Response Error:', error);
+        console.error('Response Error:', error.response.data);
 
-        if (error.response?.status === 401) {
-          throw new BadRequestException('Unauthorized access');
+        const status = error.response?.status;
+        if (status === 401) {
+          throw new UnauthorizedException('Unauthorized access');
+        }
+        if (status >= 400 && status < 500) {
+          throw new BadRequestException(
+            error.response?.data?.message || 'Client error occurred',
+          );
+        }
+        if (status >= 500) {
+          throw new BadRequestException('Server error occurred');
         }
         return Promise.reject(error);
       },
     );
   }
 
-  async get<T>(url?: string, params?: any): Promise<T> {
+  // GET request
+  async get<T>(url: string, params?: Record<string, any>): Promise<T> {
     try {
       const response = await this.axiosInstance.get<T>(url, { params });
       return response.data;
     } catch (error) {
-      throw new BadRequestException('Error fetching data');
+      throw error;
     }
   }
 
-  async post<T>(url: string, data?: any): Promise<T> {
+  // POST request
+  async post<T>(url: string, data?: Record<string, any>): Promise<T> {
     try {
       const response = await this.axiosInstance.post<T>(url, data);
       return response.data;
     } catch (error) {
-      throw new BadRequestException('Error posting data');
+      throw error;
     }
   }
 }

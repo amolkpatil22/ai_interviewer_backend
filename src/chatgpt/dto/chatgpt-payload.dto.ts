@@ -1,5 +1,10 @@
 export class ChatGptPayloadDto {
   model: string;
-  message: { role: 'system' | 'user'; content: string }[];
+  messages: GptCommandMessage[];
   temperature: number;
+}
+
+export interface GptCommandMessage {
+  role: 'system' | 'user';
+  content: string;
 }

@@ -12,6 +12,9 @@ export class Sessions {
   @Prop({ required: true, type: Types.ObjectId })
   sub_category_id: Types.ObjectId;
 
+  @Prop({ required: true })
+  difficulty: string;
+
   @Prop({ default: () => new Date() })
   start_at: Date;
 
