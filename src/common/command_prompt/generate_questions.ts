@@ -22,8 +22,8 @@ export const generateQuestionCommand = ({
       'output question:advanced questions in which code will be given and candidate has to find out output.just exact answer' +
       'coding question: questions in which a task will be given to achieve with coding for given tech stack. eg. creating timer with ui, related to some form task, stopwatch, dynamic input etc. use your own questions' +
       'generate 2 coding questions' +
-    //   'then generate 5 output based and' +
-    //   'then generate 5 theory based .' +
+      'then generate 5 output based and' +
+      'then generate 5 theory based .' +
       'Response must be array of objects. **dont use any additional word*****' +
       'Only questions each new line must be denoted with \n. Response should not contain \n. Respone must be string only, response must be parsable' +
       'Follow the below format ' +

@@ -15,4 +15,12 @@ export class QuestionsEntity {
       throw error;
     }
   }
+
+  async addQuestions(payload: Questions[]) {
+    try {
+      return await this.questionsModel.insertMany(payload);
+    } catch (error: any) {
+      throw error;
+    }
+  }
 }

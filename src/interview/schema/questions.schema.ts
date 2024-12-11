@@ -4,19 +4,25 @@ import { Types } from 'mongoose';
 @Schema({ timestamps: true })
 export class Questions {
   @Prop()
+  _id: Types.ObjectId;
+
+  @Prop()
   category_id: Types.ObjectId;
 
   @Prop()
-  name: string;
+  sub_category_id: Types.ObjectId;
+
+  @Prop()
+  question: string;
 
   @Prop()
   type: string;
 
   @Prop()
-  description: string;
+  difficulty: string;
 
   @Prop()
-  ideal_time: number;
+  hint: string;
 }
 
 export const QuestionsSchema = SchemaFactory.createForClass(Questions);

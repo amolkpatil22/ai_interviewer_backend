@@ -32,22 +32,33 @@ export class InterviewService {
     createInterviewDto: CreateSessionDto,
     accessTokenDataDto: AccessTokenDataDto,
   ) {
-    const response = await this.sessionsEntity.create({
+    const sessionResponse = await this.sessionsEntity.create({
       ...createInterviewDto,
       user_id: accessTokenDataDto.user_id,
     });
 
-    const gptResponse = await this.chatGptService.generateQuestions({
+    const questions = await this.chatGptService.generateQuestions({
       category_id: createInterviewDto.category_id,
       difficulty: createInterviewDto.difficulty,
       sub_category_id: createInterviewDto.sub_category_id,
       tech: createInterviewDto.tech,
     });
-    return gptResponse;
+
+    const QuestionsPayload = questions.map((item) => {
+      return {
+        ...item,
+        _id: new Types.ObjectId(item._id),
+        category_id: new Types.ObjectId(item.category_id),
+        sub_category_id: new Types.ObjectId(item.sub_category_id),
+      };
+    });
+
+    await this.questionsEntity.addQuestions(QuestionsPayload);
+
     return {
       status: HttpStatus.CREATED,
       message: 'Session created successfully',
-      data: response,
+      data: { sessionData: sessionResponse, questions: questions },
     };
   }
 
@@ -146,7 +157,7 @@ export class InterviewService {
 
       return {
         question_id: question._id.toString(),
-        question: question.name,
+        question: question.question,
         model_answer: modelAnswer.model_answer,
         candidate_answer: item.candidate_answer,
       };

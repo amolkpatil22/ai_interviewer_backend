@@ -16,7 +16,7 @@ import {
 import { ModelAnswersEntity } from './entities/model_answers.entity';
 import { Questions, QuestionsSchema } from './schema/questions.schema';
 import { QuestionsEntity } from './entities/questions.entity';
-import { ChatgptService } from 'src/chatgpt/chatgpt.service';
+import { ChatgptModule } from 'src/chatgpt/chatgpt.module';
 
 @Module({
   imports: [
@@ -26,6 +26,7 @@ import { ChatgptService } from 'src/chatgpt/chatgpt.service';
       { name: ModelAnswers.name, schema: ModelAnswersSchema },
       { name: Questions.name, schema: QuestionsSchema },
     ]),
+    ChatgptModule,
   ],
   controllers: [InterviewController],
   providers: [
@@ -34,7 +35,6 @@ import { ChatgptService } from 'src/chatgpt/chatgpt.service';
     CandidateAnswersEntity,
     ModelAnswersEntity,
     QuestionsEntity,
-    ChatgptService,
   ],
 })
 export class InterviewModule {}
