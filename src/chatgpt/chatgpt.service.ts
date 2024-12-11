@@ -14,6 +14,7 @@ import { GenerateQuestionDto } from './dto/generate-question.dto';
 import { ChatGptResponseDto } from './dto/chatgpt-response.dto';
 import { ChatgptEntity } from './entities/chatgpt.entity';
 import { GenerateQuestionResponseDto } from './dto/generate-question-response.dto';
+import { RawDataEntity } from './entities/raw-data.entity';
 
 @Injectable()
 export class ChatgptService {
@@ -22,6 +23,7 @@ export class ChatgptService {
   constructor(
     private configService: ConfigService,
     private chatGptEntity: ChatgptEntity,
+    private rawDataEntity: RawDataEntity,
   ) {
     this.axiosService = new AxiosService(configService, 'chatGpt');
   }
@@ -68,7 +70,7 @@ export class ChatgptService {
       '/completions',
       finalPayload,
     );
-
+    this.rawDataEntity.saveObject(gptResponse);
     await this.chatGptEntity.update({
       modelName: gptResponse.model,
       incomingTokens: gptResponse.usage.prompt_tokens,

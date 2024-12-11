@@ -21,6 +21,7 @@ export const generateQuestionCommand = ({
       'theory question: question in which theory will be asked' +
       'output question:advanced questions in which code will be given and candidate has to find out output.just exact answer' +
       'coding question: questions in which a task will be given to achieve with coding for given tech stack. eg. creating timer with ui, related to some form task, stopwatch, dynamic input etc. use your own questions' +
+      'question must be generated in below sequence'+
       'generate 2 coding questions' +
       'then generate 5 output based and' +
       'then generate 5 theory based .' +
@@ -33,6 +34,6 @@ export const generateQuestionCommand = ({
       'question:  “string” , // each new line must be denoted with \n. Coding questions must be in steps like 1,2,3 . Coding question must be solvable in 15 minutes . Question must have proper explanation //' +
       `difficulty: "${difficulty}", // fixed value//` +
       'type:”string”, // based on question theory | coding | output//' +
-      'hint: “string” , // concise hint which will contain answer// }]',
+      'hint: “string” , // concise hint which should help in brainstorming// }]',
   },
 ];
