@@ -42,12 +42,9 @@ export class AuthService {
       });
 
       res.send({
-        statusCode: HttpStatus.ACCEPTED,
-        message: 'Logged in successfully',
-        data: {
-          ...tokenPayload,
-          accessToken,
-        },
+        name: user.name,
+        email: user.email,
+        _id: user._id,
       });
     }
   }
