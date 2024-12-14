@@ -10,7 +10,10 @@ async function bootstrap() {
   const port = configService.get<number>('PORT') || 3000;
 
   app.enableCors({
-    origin: ['http://localhost:3000', 'https://smarthire-ai-interviewer.vercel.app'], // Allowed origins
+    origin: [
+      'http://localhost:3000',
+      'https://smarthire-ai-interviewer.vercel.app',
+    ], // Allowed origins
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Allowed methods
     allowedHeaders: 'Content-Type, Accept, Authorization', // Allowed headers
     credentials: true, // If using cookies or authorization headers
