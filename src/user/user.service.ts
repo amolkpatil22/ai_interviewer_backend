@@ -32,16 +32,12 @@ export class UserService {
         Number(saltRound),
       );
 
-      const response = await this.userEntity.create({
+      await this.userEntity.create({
         ...createUserDto,
         password: hashedPassword,
       });
 
-      return {
-        statusCode: HttpStatus.CREATED,
-        message: 'User Created Successfully',
-        data: response.toObject(),
-      };
+      return { message: 'User Created' };
     }
   }
 }
