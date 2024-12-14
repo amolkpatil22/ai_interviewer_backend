@@ -18,7 +18,7 @@ export class AppService {
         console.log(`request Triggered${new Date()}`);
         this.axiosService.post('/');
       },
-      10 * 1000,
+      10 * 60 * 1000,
     );
     return true;
   }
