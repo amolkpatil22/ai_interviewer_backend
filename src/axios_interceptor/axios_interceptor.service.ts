@@ -14,6 +14,7 @@ import axios, {
 
 export const BaseAPI = {
   chatGpt: 'https://api.openai.com/v1/chat',
+  own: 'https://ai-interviewer-lzlj.onrender.com',
 };
 
 @Injectable()

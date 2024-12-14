@@ -13,6 +13,7 @@ async function bootstrap() {
     origin: [
       'http://localhost:3000',
       'https://smarthire-ai-interviewer.vercel.app',
+      'https://ai-interviewer-lzlj.onrender.com'
     ], // Allowed origins
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Allowed methods
     allowedHeaders: 'Content-Type, Accept, Authorization', // Allowed headers
