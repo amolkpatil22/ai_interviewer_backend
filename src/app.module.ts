@@ -37,7 +37,15 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(AuthMiddleware)
-      .exclude('auth/(.*)', { path: '/', method: RequestMethod.ALL })
+      .exclude(
+        'auth/(.*)',
+        { path: '/', method: RequestMethod.ALL },
+        { path: 'interview/get-all-categories', method: RequestMethod.GET },
+        {
+          path: 'interview/get-sub-categories-by-category-id/:category_id',
+          method: RequestMethod.GET,
+        },
+      )
       .forRoutes('*');
   }
 }

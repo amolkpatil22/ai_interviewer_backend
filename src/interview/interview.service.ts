@@ -17,6 +17,8 @@ import { Sessions } from './schema/sessions.schema';
 import { CandidateAnswers } from './schema/candidate_answers.schema';
 import { ChatgptService } from 'src/chatgpt/chatgpt.service';
 import { UserCommandMessageDto } from 'src/common/interfaces/messageJson.dto';
+import { CategoriesEntity } from './entities/categories.entity';
+import { SubCategoriesEntity } from './entities/sub_categories.entity';
 
 @Injectable()
 export class InterviewService {
@@ -26,6 +28,8 @@ export class InterviewService {
     private questionsEntity: QuestionsEntity,
     private modelAnswerEntity: ModelAnswersEntity,
     private chatGptService: ChatgptService,
+    private categoriesEntity: CategoriesEntity,
+    private subCategoryEntity: SubCategoriesEntity,
   ) {}
 
   async create(
@@ -164,5 +168,23 @@ export class InterviewService {
     });
 
     return Promise.all(messageJson);
+  }
+
+  async getAllCategories() {
+    const response = await this.categoriesEntity.getAll();
+    if (response.length === 0) {
+      throw new NotFoundException('No Data Available');
+    }
+    return response;
+  }
+
+  async getSubCategoryByCategoryId(category_id: string) {
+    const response = await this.subCategoryEntity.getByCategoryId(
+      new Types.ObjectId(category_id),
+    );
+    if (response.length === 0) {
+      throw new NotFoundException('No Data Available');
+    }
+    return response;
   }
 }

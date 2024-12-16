@@ -17,6 +17,13 @@ import { ModelAnswersEntity } from './entities/model_answers.entity';
 import { Questions, QuestionsSchema } from './schema/questions.schema';
 import { QuestionsEntity } from './entities/questions.entity';
 import { ChatgptModule } from 'src/chatgpt/chatgpt.module';
+import { Categories, categoriesSchema } from './schema/categories.schema';
+import { CategoriesEntity } from './entities/categories.entity';
+import { SubCategoriesEntity } from './entities/sub_categories.entity';
+import {
+  SubCategories,
+  subCategoriesSchema,
+} from './schema/sub_categories.schema';
 
 @Module({
   imports: [
@@ -25,6 +32,8 @@ import { ChatgptModule } from 'src/chatgpt/chatgpt.module';
       { name: CandidateAnswers.name, schema: CandidateAnswersSchema },
       { name: ModelAnswers.name, schema: ModelAnswersSchema },
       { name: Questions.name, schema: QuestionsSchema },
+      { name: Categories.name, schema: categoriesSchema },
+      { name: SubCategories.name, schema: subCategoriesSchema },
     ]),
     ChatgptModule,
   ],
@@ -35,6 +44,8 @@ import { ChatgptModule } from 'src/chatgpt/chatgpt.module';
     CandidateAnswersEntity,
     ModelAnswersEntity,
     QuestionsEntity,
+    CategoriesEntity,
+    SubCategoriesEntity,
   ],
 })
 export class InterviewModule {}

@@ -18,6 +18,19 @@ import { SubmitAnswerDto } from './dto/submit_answer.dto';
 export class InterviewController {
   constructor(private readonly interviewService: InterviewService) {}
 
+  @Get('get-all-categories')
+  getTechStackList() {
+    return this.interviewService.getAllCategories();
+  }
+
+  @Get('get-sub-categories-by-category-id/:category_id')
+  getSubCategoryByCategoryId(@Param('category_id') category_id: string) {
+    if (!Types.ObjectId.isValid(category_id)) {
+      throw new BadRequestException('Invalid category_id format');
+    }
+    return this.interviewService.getSubCategoryByCategoryId(category_id);
+  }
+
   @Post('create-session')
   create(@Body() createSessionDto: CreateSessionDto, @Request() req: mongoReq) {
     return this.interviewService.create(createSessionDto, req.user);
