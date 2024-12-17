@@ -60,9 +60,8 @@ export class InterviewService {
     await this.questionsEntity.addQuestions(QuestionsPayload);
 
     return {
-      status: HttpStatus.CREATED,
-      message: 'Session created successfully',
-      data: { sessionData: sessionResponse, questions: questions },
+      sessionData: sessionResponse,
+      questions: questions,
     };
   }
 
