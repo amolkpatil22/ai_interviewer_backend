@@ -39,6 +39,7 @@ export class AppModule implements NestModule {
       .apply(AuthMiddleware)
       .exclude(
         'auth/(.*)',
+        'user/create-user',
         { path: '/', method: RequestMethod.ALL },
         { path: 'interview/get-all-categories', method: RequestMethod.GET },
         {
