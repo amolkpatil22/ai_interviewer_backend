@@ -57,11 +57,11 @@ export class InterviewService {
       };
     });
 
-    await this.questionsEntity.addQuestions(QuestionsPayload);
+    const response = await this.questionsEntity.addQuestions(QuestionsPayload);
 
     return {
       sessionData: sessionResponse,
-      questions: questions,
+      questions: response,
     };
   }
 
