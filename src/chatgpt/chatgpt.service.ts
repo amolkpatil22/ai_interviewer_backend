@@ -63,15 +63,16 @@ export class ChatgptService {
         sub_category_id,
         tech,
       }),
-      temperature: 0,
+      temperature: 0.5,
     };
 
     const gptResponse: ChatGptResponseDto = await this.axiosService.post(
       '/completions',
       finalPayload,
     );
+
     this.rawDataEntity.saveObject(gptResponse);
-    await this.chatGptEntity.update({
+    this.chatGptEntity.update({
       modelName: gptResponse.model,
       incomingTokens: gptResponse.usage.prompt_tokens,
       outgoingTokens: gptResponse.usage.completion_tokens,

@@ -4,9 +4,6 @@ import { Types } from 'mongoose';
 @Schema({ timestamps: true })
 export class Questions {
   @Prop()
-  _id: Types.ObjectId;
-
-  @Prop()
   category_id: Types.ObjectId;
 
   @Prop()

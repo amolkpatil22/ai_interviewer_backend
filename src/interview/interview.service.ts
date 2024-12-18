@@ -33,27 +33,27 @@ export class InterviewService {
   ) {}
 
   async create(
-    createInterviewDto: CreateSessionDto,
+    createSessionDto: CreateSessionDto,
     accessTokenDataDto: AccessTokenDataDto,
   ) {
     const sessionResponse = await this.sessionsEntity.create({
-      ...createInterviewDto,
+      ...createSessionDto,
       user_id: accessTokenDataDto.user_id,
     });
 
     const questions = await this.chatGptService.generateQuestions({
-      category_id: createInterviewDto.category_id,
-      difficulty: createInterviewDto.difficulty,
-      sub_category_id: createInterviewDto.sub_category_id,
-      tech: createInterviewDto.tech,
+      category_id: createSessionDto.category_id,
+      difficulty: createSessionDto.difficulty,
+      sub_category_id: createSessionDto.sub_category_id,
+      tech: createSessionDto.tech,
     });
 
     const QuestionsPayload = questions.map((item) => {
       return {
         ...item,
-        _id: new Types.ObjectId(item._id),
-        category_id: new Types.ObjectId(item.category_id),
-        sub_category_id: new Types.ObjectId(item.sub_category_id),
+        category_id: new Types.ObjectId(createSessionDto.category_id),
+        sub_category_id: new Types.ObjectId(createSessionDto.sub_category_id),
+        difficulty: createSessionDto.difficulty,
       };
     });
 
