@@ -110,10 +110,15 @@ export class InterviewService {
       throw new BadRequestException('Session already ended');
     }
 
+    const subCategory = await this.subCategoryEntity.getById(
+      session.sub_category_id,
+    );
+
     const AnswerFeedback = await this.chatGptService.getCandidateAnswerFeedBack(
       {
         question: question.question,
         candidate_answer: payload.candidate_answer,
+        tech_stack: subCategory.name,
       },
     );
 

@@ -5,6 +5,6 @@ export class ChatGptPayloadDto {
 }
 
 export interface GptCommandMessage {
-  role: 'system' | 'user';
+  role: 'developer' | 'user';
   content: string;
 }

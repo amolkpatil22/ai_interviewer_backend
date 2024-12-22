@@ -7,7 +7,7 @@ export const generateQuestionCommand = ({
   tech,
 }: GenerateQuestionDto): GptCommandMessage[] => [
   {
-    role: 'system',
+    role: 'developer',
     content:
       'You are a strict Technical interviewer who always asks questions one level higher than the given difficulty.',
   },
@@ -37,7 +37,7 @@ export const generateQuestionCommand = ({
       '- Do not include any additional text or explanation outside the JSON array. ' +
       '- Do not use line breaks (\\n) in the final JSON output except inside the question string as specified. ' +
       '- The response must be a valid JSON string, directly parsable. ' +
-      '- Must generate 12 questions'+
+      '- Must generate 12 questions' +
       'Example Format: ' +
       '[' +
       '  {' +

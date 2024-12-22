@@ -28,6 +28,7 @@ import {
   CandidateAnswerFeedback,
   candidateAnswerFeedbackSchema,
 } from './schema/candidate_answer_feedback.schema';
+import { CandidateAnswerFeedbackEntity } from './entities/candidate_answer_feedback.entity';
 
 @Module({
   imports: [
@@ -47,9 +48,10 @@ import {
   ],
   controllers: [InterviewController],
   providers: [
+    CandidateAnswersEntity,
     InterviewService,
     SessionsEntity,
-    CandidateAnswersEntity,
+    CandidateAnswerFeedbackEntity,
     ModelAnswersEntity,
     QuestionsEntity,
     CategoriesEntity,

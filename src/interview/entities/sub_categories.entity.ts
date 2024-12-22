@@ -15,4 +15,12 @@ export class SubCategoriesEntity {
       throw error;
     }
   }
+
+  async getById(sub_category_id: Types.ObjectId) {
+    try {
+      return await this.subCategoriesModel.findById(sub_category_id);
+    } catch (error: unknown) {
+      throw error;
+    }
+  }
 }
