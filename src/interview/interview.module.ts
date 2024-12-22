@@ -24,6 +24,10 @@ import {
   SubCategories,
   subCategoriesSchema,
 } from './schema/sub_categories.schema';
+import {
+  CandidateAnswerFeedback,
+  candidateAnswerFeedbackSchema,
+} from './schema/candidate_answer_feedback.schema';
 
 @Module({
   imports: [
@@ -34,6 +38,10 @@ import {
       { name: Questions.name, schema: QuestionsSchema },
       { name: Categories.name, schema: categoriesSchema },
       { name: SubCategories.name, schema: subCategoriesSchema },
+      {
+        name: CandidateAnswerFeedback.name,
+        schema: candidateAnswerFeedbackSchema,
+      },
     ]),
     ChatgptModule,
   ],

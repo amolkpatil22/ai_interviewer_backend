@@ -1,20 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { CreateChatgptDto } from './dto/create-chatgpt.dto';
-import { UpdateChatgptDto } from './dto/update-chatgpt.dto';
-import { UserCommandMessageDto } from 'src/common/interfaces/messageJson.dto';
-import {
-  AxiosService,
-  BaseAPI,
-} from 'src/axios_interceptor/axios_interceptor.service';
+import { AxiosService } from 'src/axios_interceptor/axios_interceptor.service';
 import { ChatGptPayloadDto } from './dto/chatgpt-payload.dto';
 import { ConfigService } from '@nestjs/config';
-import { systemCommandMessage } from 'src/common/command_prompt/command_prompt';
+import { getCandidateAnswerFeedbackMessage } from 'src/common/command_prompt/get_cadidate_answer_feedback';
 import { generateQuestionCommand } from 'src/common/command_prompt/generate_questions';
 import { GenerateQuestionDto } from './dto/generate-question.dto';
 import { ChatGptResponseDto } from './dto/chatgpt-response.dto';
 import { ChatgptEntity } from './entities/chatgpt.entity';
 import { GenerateQuestionResponseDto } from './dto/generate-question-response.dto';
 import { RawDataEntity } from './entities/raw-data.entity';
+import { AnswerFeedbackDto } from './dto/answer_feedback.dto';
+import { GetAnswerFeedbackDto } from './dto/get_answer_feedback.dto';
 
 @Injectable()
 export class ChatgptService {
@@ -28,25 +24,35 @@ export class ChatgptService {
     this.axiosService = new AxiosService(configService, 'chatGpt');
   }
 
-  async getFeedBack(messageJson: UserCommandMessageDto[]) {
-    let finalPayload: ChatGptPayloadDto = {
-      model: this.configService.get('GPT_MODEL'),
-      messages: [systemCommandMessage],
-      temperature: 0,
-    };
+  async getCandidateAnswerFeedBack({
+    question,
+    candidate_answer,
+  }: GetAnswerFeedbackDto): Promise<AnswerFeedbackDto> {
+    try {
+      const finalPayload: ChatGptPayloadDto = {
+        model: this.configService.get('GPT_MODEL'),
+        messages: getCandidateAnswerFeedbackMessage({
+          question,
+          candidate_answer,
+        }),
+        temperature: 0,
+      };
 
-    messageJson.forEach((item) => {
-      finalPayload.messages.push({
-        role: 'user',
-        content: JSON.stringify(item),
-      });
-    });
+      const gptResponse: ChatGptResponseDto = await this.axiosService.post(
+        '/completions',
+        finalPayload,
+      );
 
-    const gptResponse = await this.axiosService.post(
-      '/completions',
-      finalPayload,
-    );
-    return gptResponse;
+      this.updateTokenDatabase(gptResponse);
+
+      const feedback: AnswerFeedbackDto = JSON.parse(
+        gptResponse.choices[0].message.content,
+      );
+
+      return feedback;
+    } catch (error: unknown) {
+      throw error;
+    }
   }
 
   async generateQuestions({
@@ -71,6 +77,16 @@ export class ChatgptService {
       finalPayload,
     );
 
+    this.updateTokenDatabase(gptResponse);
+
+    const questions: GenerateQuestionResponseDto[] = JSON.parse(
+      gptResponse.choices[0].message.content,
+    );
+
+    return questions;
+  }
+
+  updateTokenDatabase(gptResponse: ChatGptResponseDto) {
     this.rawDataEntity.saveObject(gptResponse);
     this.chatGptEntity.update({
       modelName: gptResponse.model,
@@ -78,11 +94,5 @@ export class ChatgptService {
       outgoingTokens: gptResponse.usage.completion_tokens,
       total: gptResponse.usage.total_tokens,
     });
-
-    const questions: GenerateQuestionResponseDto[] = JSON.parse(
-      gptResponse.choices[0].message.content,
-    );
-
-    return questions;
   }
 }
