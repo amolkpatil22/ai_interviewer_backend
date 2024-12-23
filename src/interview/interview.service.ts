@@ -138,7 +138,7 @@ export class InterviewService {
       answer_id: candidatesAnswer._id,
     });
 
-    return candidatesAnswer;
+    return { _id: candidatesAnswer._id };
   }
 
   // async generateReport(session_id: Types.ObjectId) {
