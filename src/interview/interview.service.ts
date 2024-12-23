@@ -114,14 +114,6 @@ export class InterviewService {
       session.sub_category_id,
     );
 
-    const AnswerFeedback = await this.chatGptService.getCandidateAnswerFeedBack(
-      {
-        question: question.question,
-        candidate_answer: payload.candidate_answer,
-        tech_stack: subCategory.name,
-      },
-    );
-
     const submitPayload = {
       session_id: new Types.ObjectId(session_id),
       question_id: new Types.ObjectId(payload.question_id),
@@ -133,10 +125,28 @@ export class InterviewService {
     const candidatesAnswer =
       await this.candidateAnswersEntity.create(submitPayload);
 
-    await this.candidateAnswersFeedbackEntity.create({
-      ...AnswerFeedback,
-      answer_id: candidatesAnswer._id,
-    });
+    if (payload.candidate_answer) {
+      const AnswerFeedback =
+        await this.chatGptService.getCandidateAnswerFeedBack({
+          question: question.question,
+          candidate_answer: payload.candidate_answer,
+          tech_stack: subCategory.name,
+        });
+      await this.candidateAnswersFeedbackEntity.create({
+        ...AnswerFeedback,
+        answer_id: candidatesAnswer._id,
+      });
+    } else {
+      await this.candidateAnswersFeedbackEntity.create({
+        accuracy_of_answer: 0,
+        quality_of_answer: 0,
+        subject_knowledge: 0,
+        understanding_of_question: 0,
+        what_went_well: 'N/A',
+        what_went_wrong: 'N/A',
+        answer_id: candidatesAnswer._id,
+      });
+    }
 
     return { _id: candidatesAnswer._id };
   }

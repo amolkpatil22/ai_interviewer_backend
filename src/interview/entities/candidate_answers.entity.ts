@@ -17,7 +17,17 @@ export class CandidateAnswersEntity {
     question_id: Types.ObjectId;
   }) {
     try {
-      return await this.candidateAnswersModel.create(payload);
+      // check if answer is already there or not, if your is retrying
+      const answerData = await this.candidateAnswersModel.findOne({
+        question_id: payload.question_id,
+        session_id: payload.session_id,
+      });
+
+      if (!answerData) {
+        return await this.candidateAnswersModel.create(payload);
+      } else {
+        return answerData;
+      }
     } catch (error: any) {
       throw error;
     }
