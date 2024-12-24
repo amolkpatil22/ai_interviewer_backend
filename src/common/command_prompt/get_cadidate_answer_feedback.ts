@@ -25,10 +25,10 @@ export const getCandidateAnswerFeedbackMessage = ({
         2. **Accuracy of answer**: Is the answer correct and aligned with the requirements?
         3. **Subject knowledge**: Does the candidate demonstrate expertise in the topic?
         4. **Quality of answer**: How well-structured, concise, and clear is the response?
-        5. **what_went_well**: If candidates answer is relevant then explain concise Strengths of the candidate's response.Otherwise give taunt.
-        6. **what_went_wrong**: If candidates answer is relevant then explain concise "Weaknesses or areas for improvement".Otherwise give humorous answer.add emoji also.
+        5. **what_went_well**: If candidates answer is relevant then explain concise Strengths of the candidate's response.
+        6. **what_went_wrong**: If candidates answer is relevant then explain concise "Weaknesses or areas for improvement".Give concise correct answer also if required.
         Provide exact marks out of 10, with no leniency. If the answer is inadequate or incorrect, give 0 marks. Avoid using any extra words or explanations beyond the structure.
-        If the candidate's answer is not aligned with the given tech_stack or model answer, give 0 marks for accuracy. Do not give lenient marks under any circumstances.
+        If the candidate's answer is not aligned with the given tech_stack or model answer, give 0 marks for accuracy. Do not give lenient marks under any circumstances.      
         Provide actionable feedback in this format:
         {
           "understanding_of_question": 0,
