@@ -226,6 +226,12 @@ export class InterviewService {
         'Candidate answers not found for given session_id',
       );
     }
+    const session = await this.sessionsEntity.findOneById(
+      new Types.ObjectId(session_id),
+    );
+    const sub_category = await this.subCategoryEntity.getById(
+      session.sub_category_id,
+    );
 
     const finalReport = await Promise.all(
       candidateAnswers.map(async (item) => {
@@ -248,7 +254,9 @@ export class InterviewService {
         }
       }),
     );
-
-    return finalReport;
+    const interviewData = {
+      tech: sub_category.name,
+    };
+    return { interview_data: interviewData, feedback: finalReport };
   }
 }
