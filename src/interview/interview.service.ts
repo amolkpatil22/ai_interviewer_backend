@@ -210,4 +210,45 @@ export class InterviewService {
     }
     return response;
   }
+
+  async getReport(session_id: string) {
+    const sessionData = await this.sessionsEntity.findOneById(
+      new Types.ObjectId(session_id),
+    );
+
+    const candidateAnswers =
+      await this.candidateAnswersEntity.getAllBySessionId(
+        new Types.ObjectId(session_id),
+      );
+
+    if (candidateAnswers.length === 0) {
+      throw new NotFoundException(
+        'Candidate answers not found for given session_id',
+      );
+    }
+
+    const finalReport = await Promise.all(
+      candidateAnswers.map(async (item) => {
+        try {
+          const question = await this.questionsEntity.getQuestionById(
+            item.question_id,
+          );
+          const feedback =
+            await this.candidateAnswersFeedbackEntity.getFeedbackByCandidateAnswerId(
+              item._id,
+            );
+
+          return {
+            ...feedback.toObject(),
+            question: question.question,
+            candidate_answer: item.candidate_answer,
+          };
+        } catch (error: unknown) {
+          return undefined;
+        }
+      }),
+    );
+
+    return finalReport;
+  }
 }
