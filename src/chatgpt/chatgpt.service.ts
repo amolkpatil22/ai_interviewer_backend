@@ -28,6 +28,7 @@ export class ChatgptService {
     question,
     candidate_answer,
     tech_stack,
+    question_type
   }: GetAnswerFeedbackDto): Promise<AnswerFeedbackDto> {
     try {
       const finalPayload: ChatGptPayloadDto = {
@@ -36,6 +37,7 @@ export class ChatgptService {
           question,
           candidate_answer,
           tech_stack,
+          question_type
         }),
         temperature: 0,
       };

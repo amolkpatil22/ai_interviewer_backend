@@ -4,10 +4,12 @@ export const getCandidateAnswerFeedbackMessage = ({
   candidate_answer,
   question,
   tech_stack,
+  question_type,
 }: {
   question: string;
   candidate_answer: string;
   tech_stack: string;
+  question_type: string;
 }): GptCommandMessage[] => {
   if (!candidate_answer || !question) {
     throw new Error('candidate_answer is required.');
@@ -40,7 +42,7 @@ export const getCandidateAnswerFeedbackMessage = ({
     },
     {
       role: 'user',
-      content: `{question:${question}, candidate_answer:${candidate_answer}, tech_stack:${tech_stack}}`,
+      content: `{question:${question}, candidate_answer:${candidate_answer}, tech_stack:${tech_stack}}, type:${question_type}`,
     },
   ];
 };

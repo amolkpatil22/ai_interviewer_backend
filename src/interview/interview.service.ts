@@ -131,6 +131,7 @@ export class InterviewService {
           question: question.question,
           candidate_answer: payload.candidate_answer,
           tech_stack: subCategory.name,
+          question_type: question.type,
         });
       await this.candidateAnswersFeedbackEntity.create({
         ...AnswerFeedback,
