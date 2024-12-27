@@ -249,6 +249,7 @@ export class InterviewService {
             ...feedback.toObject(),
             question: question.question,
             candidate_answer: item.candidate_answer,
+            question_id: question._id,
           };
         } catch (error: unknown) {
           return undefined;
